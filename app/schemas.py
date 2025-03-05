@@ -2,6 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
+from datetime import date
 
 class LocationBase(BaseModel):
     name: str
@@ -11,7 +12,7 @@ class LocationBase(BaseModel):
 class LocationCreate(LocationBase):
     pass
 
-# GET/locations
+# Output of GET/locations
 class LocationResponse(BaseModel):
     id: int
     name: str
@@ -22,3 +23,20 @@ class LocationResponse(BaseModel):
     class Config:
         from_attributes = True  # 允許 SQLAlchemy ORM 自動轉換為 Pydantic 模型
 
+# Input of POST/records
+class LocationID(BaseModel):
+    locationid: int
+
+# Output of POST/records
+class RecordResponse(BaseModel):
+    recordid: int
+    semester: str
+    date: date
+    photo: str
+    description: str
+    location: int
+    villager: int
+    account: int
+
+    class Config:
+        from_attributes = True  # 允許 SQLAlchemy ORM 自動轉換為 Pydantic 模型
