@@ -23,6 +23,7 @@ class Location(Base):
     Latitude = Column("Latitude", String(30), nullable=False)
     Longitude = Column("Longitude", String(30), nullable=False)
     Address = Column("Address", String(50))
+    BriefDescription = Column(String(300))
     
     records = relationship("Record", back_populates="location")
 
@@ -33,7 +34,6 @@ class Villager(Base):
     Name = Column(String(20), nullable=False)
     Gender = Column(CHAR(1), nullable=False)
     Job = Column(String(20))
-    BriefDescription = Column(String(300))
     URL = Column(Text)
     Photo = Column(Text)
     
@@ -47,9 +47,9 @@ class Record(Base):
     Date = Column(Date, nullable=False)
     Photo = Column(Text)
     Description = Column(String(1000))
-    LocationID = Column(Integer, ForeignKey("Location.LocationID"), nullable=False)
-    VillagerID = Column(Integer, ForeignKey("Villager.VillagerID"), nullable=False)
-    AccountID = Column(Integer, ForeignKey("Account.AccountID"), nullable=False)
+    Location = Column(Integer, ForeignKey("Location.LocationID"), nullable=False)
+    Villager = Column(Integer, ForeignKey("Villager.VillagerID"), nullable=False)
+    Account = Column(Integer, ForeignKey("Account.AccountID"), nullable=False)
     
     location = relationship("Location", back_populates="records")
     villager = relationship("Villager", back_populates="records")

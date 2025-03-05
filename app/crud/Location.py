@@ -1,4 +1,4 @@
-# 負責 locations 的資料庫 CRUD
+# 負責 Location 的資料庫 CRUD
 
 from sqlalchemy.orm import Session
 from .. import models, schemas
