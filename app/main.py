@@ -42,7 +42,7 @@ def keep_alive():
             print(f"Keep-alive ping sent to {KEEP_ALIVE_URL}, Status Code: {response.status_code}")
         except Exception as e:
             print(f"Keep-alive request failed: {e}")
-        time.sleep(600)  # 每 10 分鐘請求一次
+        time.sleep(60)  # 每 10 分鐘請求一次
 
 # **啟動 Keep Alive 背景執行緒**
 threading.Thread(target=keep_alive, daemon=True).start()
