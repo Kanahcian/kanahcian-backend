@@ -9,7 +9,15 @@ def get_locations(db: Session):
 
 # **新增地點**
 def add_location(db: Session, location: schemas.LocationCreate):
-    new_location = models.Location(**location.dict())
+    # 將 schema 轉換為與 ORM 模型相符的格式
+    location_data = {
+        "name": location.name,
+        "Latitude": location.latitude,
+        "Longitude": location.longitude,
+        "Address": location.address,
+        "BriefDescription": location.brief_description
+    }
+    new_location = models.Location(**location_data)
     db.add(new_location)
     db.commit()
     db.refresh(new_location)

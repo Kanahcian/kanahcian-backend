@@ -91,21 +91,24 @@ def get_record_by_location(db: Session = Depends(get_db), location: schemas.Loca
 
     # 使用 Schema 驗證和格式化輸出數據
     return {
-        "status": "success",
-        "data": [
-            schemas.RecordResponse(
-                recordid=rec["recordid"],
-                semester=rec["semester"],
-                date=rec["date"],
-                photo=rec["photo"],
-                description=rec["description"],
-                location=rec["location"],
-                account=rec["account"],
-                students=rec["students"],
-                villagers=rec["villagers"]
-            ) for rec in record_list
-        ]
-    }
+    "status": "success",
+    "data": [
+        schemas.RecordResponse(
+            recordid=rec.RecordID,
+            semester=rec.Semester,
+            date=rec.Date,
+            photo=rec.Photo,
+            description=rec.Description,
+            location=rec.Location,
+            account=rec.account.Name if rec.account else "家訪小組",
+            # 獲取參與學生名稱 (從 StudentsAtRecord 關係)
+            students=[student.student.Name for student in rec.students] if rec.students else [],
+            # 獲取參與村民名稱 (從 VillagersAtRecord 關係)
+            villagers=[villager.villager.Name for villager in rec.villagers] if rec.villagers else []
+        )
+        for rec in record_list
+    ]
+}
 
 
 
