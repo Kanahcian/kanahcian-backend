@@ -1,6 +1,6 @@
 # Purpose:　用於設定 API 請求和回應
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import date
 
@@ -39,8 +39,7 @@ class RecordResponse(BaseModel):
     description: Optional[str] = None
     location: int
     account: str
-    students: List[str] = []
-    villagers: List[str] = []
+    students: List[str] = Field(default_factory=list)
+    villagers: List[str] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True  # 允許 SQLAlchemy ORM 自動轉換為 Pydantic 模型
+    model_config = ConfigDict(from_attributes=True)

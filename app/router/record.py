@@ -80,35 +80,32 @@ def get_record_by_location(db: Session = Depends(get_db), location: schemas.Loca
     Returns:
         dict: 包含狀態和完整家訪資料的回應
     """
-    # 使用新的綜合查詢函數
-    record_list = Record.get_record_by_location_with_details(db, location.locationid)
+    try:
+        # 使用詳細查詢函數
+        record_list = Record.get_record_by_location_with_details(db, location.locationid)
+        
+        # logger.info(f"查詢到 {len(record_list)} 條記錄")
+        
+        if not record_list:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="沒有找到任何家訪記錄"
+            )
 
-    if not record_list:
+        return {
+            "status": "success",
+            "data": record_list
+        }
+        
+    except HTTPException:
+        # 重新拋出已捕獲的 HTTPException
+        raise
+    except Exception as e:
+        logger.exception(f"處理請求時發生錯誤: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="沒有找到任何家訪記錄"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"伺服器內部錯誤: {str(e)}"
         )
-
-    # 使用 Schema 驗證和格式化輸出數據
-    return {
-    "status": "success",
-    "data": [
-        schemas.RecordResponse(
-            recordid=rec.RecordID,
-            semester=rec.Semester,
-            date=rec.Date,
-            photo=rec.Photo,
-            description=rec.Description,
-            location=rec.Location,
-            account=rec.account.Name if rec.account else "家訪小組",
-            # 獲取參與學生名稱 (從 StudentsAtRecord 關係)
-            students=[student.student.Name for student in rec.students] if rec.students else [],
-            # 獲取參與村民名稱 (從 VillagersAtRecord 關係)
-            villagers=[villager.villager.Name for villager in rec.villagers] if rec.villagers else []
-        )
-        for rec in record_list
-    ]
-}
 
 
 
