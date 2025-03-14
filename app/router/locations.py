@@ -29,6 +29,7 @@ def get_locations(db: Session = Depends(get_db)):
             latitude=loc.Latitude,  # ORM 是大寫，但 Schema 需要小寫
             longitude=loc.Longitude,
             # address=loc.Address,
+            brief_description=loc.BriefDescription
         )
         for loc in location_list
     ]
