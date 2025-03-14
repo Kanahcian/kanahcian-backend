@@ -1,16 +1,8 @@
 # Purpose:　用於設定 API 請求和回應
 
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
 from datetime import date
-
-class LocationBase(BaseModel):
-    name: str
-    lat: float
-    lon: float
-
-class LocationCreate(LocationBase):
-    pass
 
 # Output of GET/locations
 class LocationResponse(BaseModel):
@@ -33,11 +25,11 @@ class RecordResponse(BaseModel):
     recordid: int
     semester: str
     date: date
-    photo: str
-    description: str
+    photo: Optional[str] = None
+    description: Optional[str] = None
     location: int
-    # villager: int
-    account: int
+    account: str  # 現在表示帳號名稱而非 ID
+    students: List[str] = []  # 參與的大學生名單
+    villagers: List[str] = []  # 相關的村民名單
 
-    class Config:
-        from_attributes = True  # 允許 SQLAlchemy ORM 自動轉換為 Pydantic 模型
+    model_config = ConfigDict(from_attributes=True)  # Pydantic v2 語法
