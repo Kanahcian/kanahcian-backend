@@ -31,7 +31,7 @@ def get_all_records(db: Session = Depends(get_db)):
             photo=rec.Photo,
             description=rec.Description,
             location=rec.Location,
-            villager=rec.Villager,
+            # villager=rec.Villager,
             account=rec.Account,
         )
         for rec in record_list
@@ -60,7 +60,7 @@ def get_record_by_location(db: Session = Depends(get_db), location: schemas.Loca
             photo=rec.Photo,
             description=rec.Description,
             location=rec.Location,
-            villager=rec.Villager,
+            # villager=rec.Villager,
             account=rec.Account,
         )
         for rec in record_list

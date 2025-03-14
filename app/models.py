@@ -26,6 +26,7 @@ class Location(Base):
     BriefDescription = Column(String(300))
     
     records = relationship("Record", back_populates="location")
+    villagers = relationship("Villager", back_populates="location")
 
 class Villager(Base):
     __tablename__ = "Villager"
@@ -36,8 +37,10 @@ class Villager(Base):
     Job = Column(String(20))
     URL = Column(Text)
     Photo = Column(Text)
+    Location = Column(Integer, ForeignKey("Location.LocationID"))
     
-    records = relationship("Record", back_populates="villager")
+    records = relationship("VillagersAtRecord", back_populates="villager")
+    location = relationship("Location", back_populates="villagers")
 
 class Record(Base):
     __tablename__ = "Record"
@@ -48,9 +51,42 @@ class Record(Base):
     Photo = Column(Text)
     Description = Column(String(1000))
     Location = Column(Integer, ForeignKey("Location.LocationID"), nullable=False)
-    Villager = Column(Integer, ForeignKey("Villager.VillagerID"), nullable=False)
     Account = Column(Integer, ForeignKey("Account.AccountID"), nullable=False)
     
     location = relationship("Location", back_populates="records")
-    villager = relationship("Villager", back_populates="records")
     account = relationship("Account", back_populates="records")
+    
+    students = relationship("StudentsAtRecord", back_populates="record")
+    villagers = relationship("VillagersAtRecord", back_populates="record")
+
+class StudentsAtRecord(Base):
+    __tablename__ = "Students_at_record"
+    
+    Account = Column(Integer, ForeignKey("Account.AccountID"), primary_key=True)
+    Record = Column(Integer, ForeignKey("Record.RecordID"), primary_key=True)
+    
+    # 關聯關係
+    student = relationship("Account")
+    record = relationship("Record", back_populates="students")
+    
+    __table_args__ = (
+        # 定義複合主鍵約束
+        {'schema': 'public'}
+    )
+
+class VillagersAtRecord(Base):
+    __tablename__ = "Villagers_at_record"
+    
+    Villager = Column(Integer, ForeignKey("Villager.VillagerID"), primary_key=True)
+    Record = Column(Integer, ForeignKey("Record.RecordID"), primary_key=True)
+    
+    # 關聯關係
+    villager = relationship("Villager", back_populates="records")
+    record = relationship("Record", back_populates="villagers")
+    
+    __table_args__ = (
+        # 定義複合主鍵約束
+        {'schema': 'public'}
+    )
+
+

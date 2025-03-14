@@ -35,7 +35,7 @@ class RecordResponse(BaseModel):
     photo: str
     description: str
     location: int
-    villager: int
+    # villager: int
     account: int
 
     class Config:
