@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.router import locations, record
+from app.router import locations, record, villagers
 from app.database import Base, engine
 import threading
 import time
@@ -26,6 +26,7 @@ app.add_middleware(
 # **掛載 API 路由**
 app.include_router(locations.router, prefix="/api")
 app.include_router(record.router, prefix="/api")
+app.include_router(villagers.router, prefix="/api")
 
 # **測試 API**
 @app.get("/")
