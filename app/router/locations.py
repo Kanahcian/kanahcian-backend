@@ -36,7 +36,7 @@ def get_locations(db: Session = Depends(get_db)):
 }
 
 
-# **新增地點**
-@router.post("/add_location", response_model=schemas.LocationResponse)
-def add_location(location: schemas.LocationCreate, db: Session = Depends(get_db)):
-    return Location.add_location(db, location)
+# # **新增地點**
+# @router.post("/add_location", response_model=schemas.LocationResponse)
+# def add_location(location: schemas.LocationCreate, db: Session = Depends(get_db)):
+#     return Location.add_location(db, location)
