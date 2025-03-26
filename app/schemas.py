@@ -43,3 +43,18 @@ class RecordResponse(BaseModel):
     villagers: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
+
+# Input of GET/villager
+class VillagerID(BaseModel):
+    villagerid: int
+
+# Output of GET/villager
+class VillagerResponse(BaseModel):
+    villagerid: int
+    name: str
+    gender: str
+    job: Optional[str]
+    url: Optional[str]
+    photo: Optional[str]
+    locationid: int
+
