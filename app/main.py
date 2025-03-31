@@ -33,20 +33,26 @@ app.include_router(villagers.router, prefix="/api")
 def read_root():
     return {"message": "FastAPI 伺服器運行中"}
 
-# # **Keep Alive 機制**
-# KEEP_ALIVE_URL = "https://kanahcian-backend.onrender.com/"  # 請換成你的 Render API URL
+# **Keep Alive 機制**
+KEEP_ALIVE_URL = "https://kanahcian-backend.onrender.com/"  # 你的 Render API URL
+KEEP_ALIVE_INTERVAL = 60  # 14 分鐘 (Render 是 15 分鐘未活動後休眠)
 
-# def keep_alive():
-#     while True:
-#         try:
-#             response = requests.get(KEEP_ALIVE_URL)
-#             print(f"Keep-alive ping sent to {KEEP_ALIVE_URL}, Status Code: {response.status_code}")
-#         except Exception as e:
-#             print(f"Keep-alive request failed: {e}")
-#         time.sleep(60)  # 每 1 分鐘請求一次
+def keep_alive():
+    initial_delay = 60  # 啟動後先等 60 秒再開始發送請求
+    time.sleep(initial_delay)
+    
+    while True:
+        try:
+            response = requests.get(KEEP_ALIVE_URL, timeout=10)
+            print(f"Keep-alive ping sent to {KEEP_ALIVE_URL}, Status Code: {response.status_code}")
+        except Exception as e:
+            print(f"Keep-alive request failed: {e}")
+        
+        # 等待直到下一次請求
+        time.sleep(KEEP_ALIVE_INTERVAL)
 
-# # **啟動 Keep Alive 背景執行緒**
-# threading.Thread(target=keep_alive, daemon=True).start()
+# **啟動 Keep Alive 背景執行緒**
+threading.Thread(target=keep_alive, daemon=True).start()
 
 # **啟動指令**
 # uvicorn app.main:app --reload
