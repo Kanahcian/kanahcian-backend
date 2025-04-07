@@ -11,8 +11,30 @@ class LocationBase(BaseModel):
     address: Optional[str] = None
     brief_description: Optional[str] = None
 
-class LocationCreate(LocationBase):
-    pass
+# Input for POST/location
+class LocationCreate(BaseModel):
+    name: str
+    latitude: float
+    longitude: float
+    address: Optional[str] = None
+    brief_description: Optional[str] = None
+
+# Input for PUT/location
+class LocationUpdate(BaseModel):
+    name: str
+    latitude: float
+    longitude: float
+    address: Optional[str] = None
+    brief_description: Optional[str] = None
+
+# Output of GET/location
+class LocationResponse(BaseModel):
+    id: int
+    name: str
+    latitude: float
+    longitude: float
+    address: Optional[str] = None
+    brief_description: Optional[str] = None
 
 # Output of GET/locations
 class LocationResponse(BaseModel):
