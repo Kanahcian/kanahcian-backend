@@ -112,11 +112,6 @@ class RelationshipType(Base):
     Source_Role = Column(String(20), nullable=False)  # 關係源角色，如：父親、丈夫
     Target_Role = Column(String(20), nullable=False)  # 關係目標角色，如：兒子、妻子
     Description = Column(String(100))  # 可選的關係描述
-    IsSymmetrical = Column(Boolean, default=False, nullable=False)  # 是否為對稱關係
-    InverseRelationshipID = Column(Integer, ForeignKey("RelationshipType.RelationshipTypeID"), nullable=True)  # 關係的逆關係
-    
-    # 自參照關係，用於找出一種關係的逆關係
-    inverse_relationship = relationship("RelationshipType", remote_side=[RelationshipTypeID], uselist=False)
     
     # 關聯到親屬關係表
     relationships = relationship("VillagerRelationship", back_populates="relationship_type")
