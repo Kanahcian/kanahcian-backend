@@ -28,8 +28,10 @@ def get_locations(db: Session = Depends(get_db)):
             name=loc.name,  # 小寫
             latitude=loc.Latitude,  # ORM 是大寫，但 Schema 需要小寫
             longitude=loc.Longitude,
-            # address=loc.Address,
-            brief_description=loc.BriefDescription
+            address=loc.Address,
+            brief_description=loc.BriefDescription,
+            photo=loc.Photo,
+            tag=loc.Tag
         )
         for loc in location_list
     ]
@@ -48,7 +50,9 @@ def create_location(location: schemas.LocationCreate, db: Session = Depends(get_
             latitude=new_loc.Latitude,
             longitude=new_loc.Longitude,
             address=new_loc.Address,
-            brief_description=new_loc.BriefDescription
+            brief_description=new_loc.BriefDescription,
+            photo=new_loc.Photo,
+            tag=new_loc.Tag
         )
     }
 
@@ -66,7 +70,9 @@ def update_location(location_id: int, location: schemas.LocationUpdate, db: Sess
             latitude=updated.Latitude,
             longitude=updated.Longitude,
             address=updated.Address,
-            brief_description=updated.BriefDescription
+            brief_description=updated.BriefDescription,
+            photo=updated.Photo,
+            tag=updated.Tag
         )
     }
 
