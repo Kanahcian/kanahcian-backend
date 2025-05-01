@@ -91,3 +91,49 @@ class VillagerResponse(BaseModel):
     photo: Optional[str]
     locationid: int
 
+# 村民關係模型
+class RelationshipBase(BaseModel):
+    relationship_id: int
+    relative_id: int
+    relative_name: str
+    relationship_type: str
+    role: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+# 村民詳細回應（包含親屬關係）
+class VillagerDetailResponse(BaseModel):
+    villagerid: int
+    name: str
+    gender: str
+    job: Optional[str] = None
+    url: Optional[str] = None
+    photo: Optional[str] = None
+    locationid: int
+    relationships: List[dict] = Field(default_factory=list)
+
+    model_config = ConfigDict(from_attributes=True)
+
+# 新增村民請求
+class VillagerCreate(BaseModel):
+    name: str
+    gender: str  # 'M' 或 'F'
+    job: Optional[str] = None
+    url: Optional[str] = None
+    photo: Optional[str] = None
+    location_id: int
+
+# 更新村民請求
+class VillagerUpdate(BaseModel):
+    name: str
+    gender: str  # 'M' 或 'F'
+    job: Optional[str] = None
+    url: Optional[str] = None
+    photo: Optional[str] = None
+    location_id: int
+
+# 新增村民親屬關係請求
+class RelationshipCreate(BaseModel):
+    source_villager_id: int
+    target_villager_id: int
+    relationship_type_id: int

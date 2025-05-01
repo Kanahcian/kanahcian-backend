@@ -7,7 +7,7 @@ from ..crud import Location
 from ..database import get_db
 from .. import schemas
 
-router = APIRouter()
+router = APIRouter(tags=["Location"])
 
 # **取得所有地點**
 @router.get("/locations", response_model=dict, status_code=status.HTTP_200_OK)
