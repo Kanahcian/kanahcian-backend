@@ -40,6 +40,7 @@ class Villager(Base):
     URL = Column(Text)
     Photo = Column(Text)
     Location = Column(Integer, ForeignKey("Location.LocationID"))
+    ContactInfo = Column(Text)
     
     records = relationship("VillagersAtRecord", back_populates="villager")
     location = relationship("Location", back_populates="villagers")
