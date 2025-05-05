@@ -11,7 +11,7 @@ class LocationBase(BaseModel):
     address: Optional[str] = None
     brief_description: Optional[str] = None
     photo: Optional[str] = None
-    tag: Optional[List[List[str]]] = None
+    tag: Optional[List[str]] = None
 
 
 # Input for POST/location
@@ -22,7 +22,7 @@ class LocationCreate(BaseModel):
     address: Optional[str] = None
     brief_description: Optional[str] = None
     photo: Optional[str] = None
-    tag: Optional[List[List[str]]] = None
+    tag: Optional[List[str]] = None
 
 # Input for PUT/location
 class LocationUpdate(BaseModel):
@@ -32,7 +32,7 @@ class LocationUpdate(BaseModel):
     address: Optional[str] = None
     brief_description: Optional[str] = None
     photo: Optional[str] = None
-    tag: Optional[List[List[str]]] = None
+    tag: Optional[List[str]] = None
 
 # Output of GET/location
 class LocationResponse(BaseModel):
@@ -43,7 +43,7 @@ class LocationResponse(BaseModel):
     address: Optional[str] = None
     brief_description: Optional[str] = None
     photo: Optional[str] = None
-    tag: Optional[List[List[str]]] = None
+    tag: Optional[List[str]] = None
 
 # Output of GET/locations
 class LocationResponse(BaseModel):
@@ -54,7 +54,7 @@ class LocationResponse(BaseModel):
     # address: Optional[str]=None  # `Address` 可能是 NULL，所以加 `None`
     brief_description: Optional[str]=None  # `BriefDescription` 可能是 NULL，所以加 `None`
     photo: Optional[str] = None
-    tag: Optional[List[List[str]]] = None
+    tag: Optional[List[str]] = None
 
     class Config:
         from_attributes = True  # 允許 SQLAlchemy ORM 自動轉換為 Pydantic 模型
