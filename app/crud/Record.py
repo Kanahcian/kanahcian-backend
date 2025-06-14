@@ -190,3 +190,141 @@ def get_record_by_location_with_details(db: Session, location_id: int) -> list:
         result.append(record_dict)
     
     return result
+
+def create_record(db: Session, record_data: schemas.RecordCreate) -> models.Record:
+    """
+    創建新的家訪記錄
+    
+    Args:
+        db (Session): 資料庫連線
+        record_data (schemas.RecordCreate): 家訪記錄數據
+        
+    Returns:
+        models.Record: 創建的家訪記錄
+    """
+    # 創建家訪記錄
+    db_record = models.Record(
+        Semester=record_data.semester,
+        Date=record_data.date,
+        Photo=record_data.photo,
+        Description=record_data.description,
+        Location=record_data.location_id,
+        Account=record_data.account_id
+    )
+    
+    db.add(db_record)
+    db.commit()
+    db.refresh(db_record)
+    
+    # 添加參與的學生
+    for student_id in record_data.student_ids:
+        db_student_record = models.StudentsAtRecord(
+            Account=student_id,
+            Record=db_record.RecordID
+        )
+        db.add(db_student_record)
+    
+    # 添加相關的村民
+    for villager_id in record_data.villager_ids:
+        db_villager_record = models.VillagersAtRecord(
+            Villager=villager_id,
+            Record=db_record.RecordID
+        )
+        db.add(db_villager_record)
+    
+    db.commit()
+    return db_record
+
+def update_record(db: Session, record_id: int, record_data: schemas.RecordUpdate) -> models.Record:
+    """
+    更新家訪記錄
+    
+    Args:
+        db (Session): 資料庫連線
+        record_id (int): 家訪記錄ID
+        record_data (schemas.RecordUpdate): 要更新的家訪記錄數據
+        
+    Returns:
+        models.Record: 更新後的家訪記錄
+    """
+    # 獲取現有的記錄
+    db_record = db.query(models.Record).filter(models.Record.RecordID == record_id).first()
+    if not db_record:
+        return None
+    
+    # 更新基本資訊
+    if record_data.semester is not None:
+        db_record.Semester = record_data.semester
+    if record_data.date is not None:
+        db_record.Date = record_data.date
+    if record_data.photo is not None:
+        db_record.Photo = record_data.photo
+    if record_data.description is not None:
+        db_record.Description = record_data.description
+    if record_data.location_id is not None:
+        db_record.Location = record_data.location_id
+    if record_data.account_id is not None:
+        db_record.Account = record_data.account_id
+    
+    # 如果需要更新學生列表
+    if record_data.student_ids is not None:
+        # 刪除現有的學生關聯
+        db.query(models.StudentsAtRecord).filter(
+            models.StudentsAtRecord.Record == record_id
+        ).delete()
+        
+        # 添加新的學生關聯
+        for student_id in record_data.student_ids:
+            db_student_record = models.StudentsAtRecord(
+                Account=student_id,
+                Record=record_id
+            )
+            db.add(db_student_record)
+    
+    # 如果需要更新村民列表
+    if record_data.villager_ids is not None:
+        # 刪除現有的村民關聯
+        db.query(models.VillagersAtRecord).filter(
+            models.VillagersAtRecord.Record == record_id
+        ).delete()
+        
+        # 添加新的村民關聯
+        for villager_id in record_data.villager_ids:
+            db_villager_record = models.VillagersAtRecord(
+                Villager=villager_id,
+                Record=record_id
+            )
+            db.add(db_villager_record)
+    
+    db.commit()
+    db.refresh(db_record)
+    return db_record
+
+def delete_record(db: Session, record_id: int) -> bool:
+    """
+    刪除家訪記錄
+    
+    Args:
+        db (Session): 資料庫連線
+        record_id (int): 要刪除的家訪記錄ID
+        
+    Returns:
+        bool: 是否成功刪除
+    """
+    # 刪除相關的學生關聯
+    db.query(models.StudentsAtRecord).filter(
+        models.StudentsAtRecord.Record == record_id
+    ).delete()
+    
+    # 刪除相關的村民關聯
+    db.query(models.VillagersAtRecord).filter(
+        models.VillagersAtRecord.Record == record_id
+    ).delete()
+    
+    # 刪除家訪記錄
+    result = db.query(models.Record).filter(
+        models.Record.RecordID == record_id
+    ).delete()
+    
+    db.commit()
+    return result > 0

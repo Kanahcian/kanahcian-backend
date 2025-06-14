@@ -132,6 +132,32 @@ class VillagerUpdate(BaseModel):
     photo: Optional[str] = None
     location_id: int
 
+# 新增家訪記錄請求
+class RecordCreate(BaseModel):
+    semester: str
+    date: date
+    photo: Optional[str] = None
+    description: Optional[str] = None
+    location_id: int
+    account_id: int
+    student_ids: List[int] = Field(default_factory=list)
+    villager_ids: List[int] = Field(default_factory=list)
+
+# 更新家訪記錄請求
+class RecordUpdate(BaseModel):
+    semester: Optional[str] = None
+    date: Optional[date] = None
+    photo: Optional[str] = None
+    description: Optional[str] = None
+    location_id: Optional[int] = None
+    account_id: Optional[int] = None
+    student_ids: Optional[List[int]] = None
+    villager_ids: Optional[List[int]] = None
+
+# 刪除家訪記錄請求
+class RecordDelete(BaseModel):
+    record_id: int
+
 # 新增村民親屬關係請求
 class RelationshipCreate(BaseModel):
     source_villager_id: int
