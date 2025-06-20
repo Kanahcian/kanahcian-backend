@@ -38,8 +38,8 @@ class LocationUpdate(BaseModel):
 class LocationResponse(BaseModel):
     id: int
     name: str
-    latitude: float
-    longitude: float
+    latitude: Optional[str] = None  # 允許 NULL 值
+    longitude: Optional[str] = None  # 允許 NULL 值
     address: Optional[str] = None
     brief_description: Optional[str] = None
     photo: Optional[str] = None
