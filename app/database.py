@@ -56,10 +56,12 @@ def get_db():
 # **添加連接池監控函數**
 def get_pool_status():
     """獲取連接池狀態用於監控"""
-    return {
-        "pool_size": engine.pool.size(),
-        "checked_out": engine.pool.checkedout(),
-        "checked_in": engine.pool.checkedin(),
-        "overflow": engine.pool.overflow(),
-        "invalid": engine.pool.invalid()
-    }
+    try:
+        return {
+            "pool_size": engine.pool.size(),
+            "checked_out": engine.pool.checkedout(),
+            "checked_in": engine.pool.checkedin(),
+            "overflow": engine.pool.overflow()
+        }
+    except Exception as e:
+        return {"error": str(e)}
