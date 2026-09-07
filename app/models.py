@@ -9,7 +9,6 @@ class Student(Base):
 
     StudentID = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Name = Column(String(20), nullable=False)
-    Password = Column(String(300), nullable=False)
     EntrySemester = Column(CHAR(3), nullable=False)
     Photo = Column(Text)
 

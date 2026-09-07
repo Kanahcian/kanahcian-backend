@@ -176,3 +176,32 @@ class RelationshipCreate(BaseModel):
     source_villager_id: int
     target_villager_id: int
     relationship_type_id: int
+
+# ===== Student（大學生名單）相關 Schemas =====
+
+class StudentCreate(BaseModel):
+    name: str
+    entry_semester: str  # 入隊學期，如 "23S"
+    photo: Optional[str] = None
+
+class StudentUpdate(BaseModel):
+    name: Optional[str] = None
+    entry_semester: Optional[str] = None
+    photo: Optional[str] = None
+
+class StudentResponse(BaseModel):
+    student_id: int
+    name: str
+    entry_semester: str
+    photo: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+    @classmethod
+    def from_orm_student(cls, student):
+        return cls(
+            student_id=student.StudentID,
+            name=student.Name,
+            entry_semester=student.EntrySemester,
+            photo=student.Photo,
+        )
