@@ -4,10 +4,10 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey, Date, CHAR, AR
 from sqlalchemy.orm import relationship
 from app.database import Base
 
-class Account(Base):
-    __tablename__ = "Account"
-    
-    AccountID = Column(Integer, primary_key=True, index=True, autoincrement=True)
+class Student(Base):
+    __tablename__ = "Student"
+
+    StudentID = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Name = Column(String(20), nullable=False)
     Password = Column(String(300), nullable=False)
     EntrySemester = Column(CHAR(3), nullable=False)
@@ -75,11 +75,11 @@ class Record(Base):
 class StudentsAtRecord(Base):
     __tablename__ = "Students_at_record"
     
-    Account = Column(Integer, ForeignKey("Account.AccountID"), primary_key=True)
+    Student = Column(Integer, ForeignKey("Student.StudentID"), primary_key=True)
     Record = Column(Integer, ForeignKey("Record.RecordID"), primary_key=True)
-    
+
     # 關聯關係
-    student = relationship("Account")
+    student = relationship("Student")
     record = relationship("Record", back_populates="students")
     
     __table_args__ = (

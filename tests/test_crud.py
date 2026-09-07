@@ -136,11 +136,11 @@ def test_create_relationship_missing_villager_raises(db):
 
 # ---------- Record ----------
 
-def _make_account(db):
-    acc = models.Account(Name="家訪小組", Password="x", EntrySemester="25S")
-    db.add(acc)
+def _make_student(db):
+    stu = models.Student(Name="家訪小組", Password="x", EntrySemester="25S")
+    db.add(stu)
     db.commit()
-    return acc
+    return stu
 
 
 def test_record_crud_flow(db):
@@ -174,7 +174,7 @@ def test_record_crud_flow(db):
 
 def test_record_with_details_includes_participants(db):
     loc = _make_location(db)
-    acc = _make_account(db)
+    stu = _make_student(db)
     v = villager_crud.create_villager(
         db, schemas.VillagerCreate(name="村民甲", gender="F", location_id=loc.LocationID),
     )
@@ -185,7 +185,7 @@ def test_record_with_details_includes_participants(db):
             location_id=loc.LocationID,
         ),
     )
-    db.add(models.StudentsAtRecord(Account=acc.AccountID, Record=rec.RecordID))
+    db.add(models.StudentsAtRecord(Student=stu.StudentID, Record=rec.RecordID))
     db.add(models.VillagersAtRecord(Villager=v.VillagerID, Record=rec.RecordID))
     db.commit()
 
