@@ -7,6 +7,7 @@ from app import models, schemas
 from app.crud import Location as location_crud
 from app.crud import Villager as villager_crud
 from app.crud import Record as record_crud
+from app.crud import Student as student_crud
 
 
 # ---------- Location ----------
@@ -136,11 +137,52 @@ def test_create_relationship_missing_villager_raises(db):
 
 # ---------- Record ----------
 
-def _make_account(db):
-    acc = models.Account(Name="家訪小組", Password="x", EntrySemester="25S")
-    db.add(acc)
+def _make_student(db):
+    stu = models.Student(Name="家訪小組", EntrySemester="25S")
+    db.add(stu)
     db.commit()
-    return acc
+    return stu
+
+
+# ---------- Student ----------
+
+def test_student_crud_flow(db):
+    created = student_crud.create_student(
+        db, schemas.StudentCreate(name="彭靖淵", entry_semester="23S"),
+    )
+    assert created.StudentID is not None
+
+    assert student_crud.get_student_by_id(db, created.StudentID).Name == "彭靖淵"
+    assert [s.Name for s in student_crud.get_students(db)] == ["彭靖淵"]
+
+    updated = student_crud.update_student(
+        db, created.StudentID, schemas.StudentUpdate(entry_semester="24S"),
+    )
+    assert updated.EntrySemester == "24S" and updated.Name == "彭靖淵"
+
+    assert student_crud.update_student(
+        db, 9999, schemas.StudentUpdate(name="x"),
+    ) is None
+
+    assert student_crud.delete_student(db, created.StudentID) is True
+    assert student_crud.delete_student(db, created.StudentID) is False
+    assert student_crud.get_students(db) == []
+
+
+def test_delete_student_clears_record_link(db):
+    loc = _make_location(db)
+    stu = _make_student(db)
+    rec = record_crud.create_record(
+        db,
+        schemas.RecordCreate(
+            semester="25S", date=date(2025, 3, 1), location_id=loc.LocationID,
+        ),
+    )
+    db.add(models.StudentsAtRecord(Student=stu.StudentID, Record=rec.RecordID))
+    db.commit()
+
+    assert student_crud.delete_student(db, stu.StudentID) is True
+    assert db.query(models.StudentsAtRecord).count() == 0
 
 
 def test_record_crud_flow(db):
@@ -174,7 +216,7 @@ def test_record_crud_flow(db):
 
 def test_record_with_details_includes_participants(db):
     loc = _make_location(db)
-    acc = _make_account(db)
+    stu = _make_student(db)
     v = villager_crud.create_villager(
         db, schemas.VillagerCreate(name="村民甲", gender="F", location_id=loc.LocationID),
     )
@@ -185,7 +227,7 @@ def test_record_with_details_includes_participants(db):
             location_id=loc.LocationID,
         ),
     )
-    db.add(models.StudentsAtRecord(Account=acc.AccountID, Record=rec.RecordID))
+    db.add(models.StudentsAtRecord(Student=stu.StudentID, Record=rec.RecordID))
     db.add(models.VillagersAtRecord(Villager=v.VillagerID, Record=rec.RecordID))
     db.commit()
 
