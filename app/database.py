@@ -10,27 +10,34 @@ import os
 load_dotenv()
 
 # **取得資料庫連線字串**
-DATABASE_URL = os.getenv("DATABASE_URL")
+# 未設定時退回本地 SQLite，讓測試 / CI 不需要真正的 Postgres
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
-# **修復連接洩漏的資料庫連線設定**
-engine = create_engine(
-    DATABASE_URL, 
-    connect_args={
-        "sslmode": "require",
-        "connect_timeout": 10,  # 縮短連接超時
-        # "options": "-c statement_timeout=10000"  # 縮短查詢超時到10秒
-    },
-    # 嚴格的連接池設定防止洩漏
-    pool_size=5,  # 減少基本連接池大小
-    max_overflow=10,  # 減少額外連接數
-    pool_timeout=20,  # 縮短獲取連接的超時時間
-    pool_recycle=1800,  # 30分鐘後回收連接（更頻繁）
-    pool_pre_ping=True,  # 使用前檢查連接是否有效
-    
-    # 新增：強制回收閒置連接
-    pool_reset_on_return='commit',  # 返回時重置連接狀態
-    echo=False  # 生產環境關閉 SQL 日誌
-)
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    # **修復連接洩漏的資料庫連線設定**
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={
+            "sslmode": os.getenv("DB_SSLMODE", "require"),
+            "connect_timeout": 10,  # 縮短連接超時
+            # "options": "-c statement_timeout=10000"  # 縮短查詢超時到10秒
+        },
+        # 嚴格的連接池設定防止洩漏
+        pool_size=5,  # 減少基本連接池大小
+        max_overflow=10,  # 減少額外連接數
+        pool_timeout=20,  # 縮短獲取連接的超時時間
+        pool_recycle=1800,  # 30分鐘後回收連接（更頻繁）
+        pool_pre_ping=True,  # 使用前檢查連接是否有效
+
+        # 新增：強制回收閒置連接
+        pool_reset_on_return='commit',  # 返回時重置連接狀態
+        echo=False  # 生產環境關閉 SQL 日誌
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

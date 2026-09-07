@@ -1,6 +1,6 @@
 # Purpose: Define the database schema
 
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Date, CHAR, ARRAY, Boolean, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Date, CHAR, ARRAY, Boolean, UniqueConstraint, JSON
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -25,7 +25,8 @@ class Location(Base):
     Address = Column("Address", String(50))
     BriefDescription = Column(String(300))
     Photo = Column(Text)
-    Tag = Column("Tag", ARRAY(String, dimensions=1))  # 使用 ARRAY 儲存多個標籤
+    # Postgres 用 ARRAY，SQLite（測試）退回 JSON
+    Tag = Column("Tag", ARRAY(String, dimensions=1).with_variant(JSON(), "sqlite"))
     
     records = relationship("Record", back_populates="location")
     villagers = relationship("Villager", back_populates="location")

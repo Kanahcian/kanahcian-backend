@@ -2,3 +2,6 @@
 __pycache__
 playground.ipynb
 venv/
+*.db
+.pytest_cache/
+neon_backup.sql
