@@ -8,8 +8,7 @@ from app.crud.Record import (
     # 新版函數
     get_all_records, 
     get_record_by_id, 
-    get_records_by_location, 
-    get_records_by_account, 
+    get_records_by_location,
     get_records_by_semester,
     create_record, 
     update_record, 

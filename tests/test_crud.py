@@ -145,13 +145,12 @@ def _make_account(db):
 
 def test_record_crud_flow(db):
     loc = _make_location(db)
-    acc = _make_account(db)
 
     rec = record_crud.create_record(
         db,
         schemas.RecordCreate(
             semester="25S", date=date(2025, 3, 1), description="第一次",
-            location_id=loc.LocationID, account_id=acc.AccountID,
+            location_id=loc.LocationID,
         ),
     )
     assert rec.RecordID is not None
@@ -183,7 +182,7 @@ def test_record_with_details_includes_participants(db):
         db,
         schemas.RecordCreate(
             semester="25S", date=date(2025, 3, 1),
-            location_id=loc.LocationID, account_id=acc.AccountID,
+            location_id=loc.LocationID,
         ),
     )
     db.add(models.StudentsAtRecord(Account=acc.AccountID, Record=rec.RecordID))
@@ -195,7 +194,7 @@ def test_record_with_details_includes_participants(db):
         db,
         schemas.RecordCreate(
             semester="25S", date=date(2025, 2, 1),
-            location_id=loc.LocationID, account_id=acc.AccountID,
+            location_id=loc.LocationID,
         ),
     )
 

@@ -58,7 +58,6 @@ class RecordBase(BaseModel):
     photo: Optional[str] = None
     description: Optional[str] = None
     location_id: int
-    account_id: int
 
 class RecordCreate(RecordBase):
     """創建 Record 請求模型"""
@@ -71,7 +70,6 @@ class RecordUpdate(BaseModel):
     photo: Optional[str] = None
     description: Optional[str] = None
     location_id: Optional[int] = None
-    account_id: Optional[int] = None
 
 class RecordResponse(BaseModel):
     """Record 回應模型"""
@@ -81,10 +79,9 @@ class RecordResponse(BaseModel):
     photo: Optional[str] = None
     description: Optional[str] = None
     location_id: Optional[int] = None  # 允許 NULL
-    account_id: Optional[int] = None   # 允許 NULL
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     @classmethod
     def from_orm_record(cls, record):
         """從 ORM Record 物件創建回應模型"""
@@ -95,7 +92,6 @@ class RecordResponse(BaseModel):
             photo=record.Photo,
             description=record.Description,
             location_id=record.Location,  # 可能是 NULL
-            account_id=record.Account     # 可能是 NULL
         )
 
 # ===== 請求參數模型 - 新增 =====
@@ -107,10 +103,6 @@ class LocationID(BaseModel):
 class LocationIdParam(BaseModel):
     """新的地點 ID 參數模型"""
     location_id: int
-
-class AccountIdParam(BaseModel):
-    """帳號 ID 參數模型"""
-    account_id: int
 
 class SemesterParam(BaseModel):
     """學期參數模型"""

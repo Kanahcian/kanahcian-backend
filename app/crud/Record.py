@@ -43,21 +43,6 @@ def get_records_by_location(db: Session, location_id: int):
         models.Record.Location == location_id
     ).order_by(models.Record.Date.desc()).all()
 
-def get_records_by_account(db: Session, account_id: int):
-    """
-    根據帳號 ID 取得該帳號創建的所有家訪紀錄
-    
-    Args:
-        db (Session): 資料庫連線
-        account_id (int): 帳號 ID
-    
-    Returns:
-        List[models.Record]: 該帳號的家訪紀錄列表
-    """
-    return db.query(models.Record).filter(
-        models.Record.Account == account_id
-    ).order_by(models.Record.Date.desc()).all()
-
 def get_records_by_semester(db: Session, semester: str):
     """
     根據學期取得該學期的所有家訪紀錄
@@ -90,7 +75,6 @@ def create_record(db: Session, record: schemas.RecordCreate):
         Photo=record.photo,
         Description=record.description,
         Location=record.location_id,
-        Account=record.account_id
     )
     
     db.add(db_record)
@@ -126,9 +110,7 @@ def update_record(db: Session, record_id: int, record: schemas.RecordUpdate):
         db_record.Description = record.description
     if record.location_id is not None:
         db_record.Location = record.location_id
-    if record.account_id is not None:
-        db_record.Account = record.account_id
-    
+
     db.commit()
     db.refresh(db_record)
     return db_record
@@ -201,7 +183,6 @@ def get_record_by_location(db: Session, ID: int):
             'Photo': record.Photo,
             'Description': record.Description,
             'Location': record.Location,
-            'Account': record.Account,  # 注意：這裡直接返回 Account ID，不是名稱
         }
         result.append(record_dict)
     
@@ -230,7 +211,6 @@ def get_record_by_location_with_details(db: Session, location_id: int):
             'photo': record.Photo,
             'description': record.Description,
             'location': record.Location,
-            'account': record.Account,
             'students': get_students_by_record(record),
             'villagers': get_villagers_by_record(record),
         }

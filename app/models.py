@@ -12,8 +12,6 @@ class Account(Base):
     Password = Column(String(300), nullable=False)
     EntrySemester = Column(CHAR(3), nullable=False)
     Photo = Column(Text)
-    
-    records = relationship("Record", back_populates="account")
 
 class Location(Base):
     __tablename__ = "Location"
@@ -68,11 +66,9 @@ class Record(Base):
     Photo = Column(Text)
     Description = Column(String(1000))
     Location = Column(Integer, ForeignKey("Location.LocationID"), nullable=False)
-    Account = Column(Integer, ForeignKey("Account.AccountID"), nullable=False)
-    
+
     location = relationship("Location", back_populates="records")
-    account = relationship("Account", back_populates="records")
-    
+
     students = relationship("StudentsAtRecord", back_populates="record")
     villagers = relationship("VillagersAtRecord", back_populates="record")
 
