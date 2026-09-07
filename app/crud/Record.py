@@ -1,6 +1,6 @@
 # app/crud/Record.py - 完整替換版本
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from .. import models, schemas
 
 def get_all_records(db: Session):
@@ -209,40 +209,43 @@ def get_record_by_location(db: Session, ID: int):
 
 def get_record_by_location_with_details(db: Session, location_id: int):
     """
-    舊版函數 - 保持向後兼容
-    根據地點ID獲取所有相關的家訪記錄（簡化版本）
+    根據地點ID獲取所有相關的家訪記錄，含參與的大學生與受訪村民
     """
-    records = get_records_by_location(db, location_id)
-    
-    # 轉換為舊版格式
-    result = []
-    for record in records:
-        record_dict = {
+    records = (
+        db.query(models.Record)
+        .options(
+            joinedload(models.Record.students).joinedload(models.StudentsAtRecord.student),
+            joinedload(models.Record.villagers).joinedload(models.VillagersAtRecord.villager),
+        )
+        .filter(models.Record.Location == location_id)
+        .order_by(models.Record.Date.desc())
+        .all()
+    )
+
+    return [
+        {
             'recordid': record.RecordID,
             'semester': record.Semester,
             'date': record.Date,
             'photo': record.Photo,
             'description': record.Description,
             'location': record.Location,
-            'account': record.Account,  # 簡化版本：直接返回 Account ID
-            'students': [],  # 簡化版本：不包含學生資料
-            'villagers': []  # 簡化版本：不包含村民資料
+            'account': record.Account,
+            'students': get_students_by_record(record),
+            'villagers': get_villagers_by_record(record),
         }
-        result.append(record_dict)
-    
-    return result
+        for record in records
+    ]
 
-def get_students_by_record(db: Session, record_id: int):
-    """
-    舊版函數 - 保持向後兼容
-    簡化版本：返回空列表
-    """
-    return []
+def get_students_by_record(record):
+    """取得一筆家訪紀錄的參與大學生名單"""
+    return [link.student.Name for link in record.students if link.student]
 
-def get_villagers_by_record(db: Session, record_id: int):
-    """
-    舊版函數 - 保持向後兼容
-    簡化版本：返回空列表
-    """
-    return []
+def get_villagers_by_record(record):
+    """取得一筆家訪紀錄的受訪村民（前端以 villager_id 判斷結構，不可改名）"""
+    return [
+        {'villager_id': link.villager.VillagerID, 'name': link.villager.Name}
+        for link in record.villagers
+        if link.villager
+    ]
 
